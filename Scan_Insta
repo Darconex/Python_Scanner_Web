@@ -1,0 +1,31 @@
+import instaloader
+import getpass
+
+def download_images(username, password, friend_username, download_folder="images", max_posts=None):
+    # Créez une instance d'Instaloader
+    loader = instaloader.Instaloader(dirname_pattern=download_folder)
+
+    # Connectez-vous au compte Instagram
+    loader.login(username, password)
+
+    # Obtenez le profil du compte Instagram de votre victime
+    profile = instaloader.Profile.from_username(loader.context, friend_username)
+
+    # Téléchargez les images du compte de votre victime
+    count = 0
+    for post in profile.get_posts():
+        if max_posts is not None and count >= max_posts:
+            break
+        loader.download_post(post, target=profile.username)
+        count += 1
+
+# Exemple d'utilisation du script avec les informations de connexion de votre victime
+if __name__ == "__main__":
+    username = input("Entrez votre nom d'utilisateur Instagram : ")
+    password = getpass.getpass("Entrez votre mot de passe Instagram : ")
+    friend_username = input("Entrez le nom d'utilisateur Instagram de votre victime : ")
+    download_folder = input("Entrez le nom du dossier de téléchargement (par défaut: images) : ") or "images"
+    max_posts = int(input("Entrez le nombre maximum d'images à télécharger (entrez 0 pour télécharger toutes les images) : "))
+    
+    # Télécharger les images
+    download_images(username, password, friend_username, download_folder, max_posts)
